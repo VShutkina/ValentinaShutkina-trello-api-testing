@@ -4,10 +4,10 @@
         <classes>
             <class name="TrelloBoardTests">
                 <methods>
-                    <include name="simpleGetBoardTest"/>
-                    <include name="simpleCreateBoardTest"/>
-                    <include name="simpleDeleteBoardTest"/>
-                    <include name="simpleUpdateBoardTest"/>
+                    <include name="createBoardTest"/>
+                    <include name="getBoardTest"/>
+                    <include name="updateBoardTest"/>
+                    <include name="deleteBoardTest"/>
                     <include name="simpleGetMemberTest"/>
                     <include name="simpleGetMemberBoardsTest"/>
                 </methods>

@@ -2,6 +2,7 @@ import api.BoardApi;
 import beans.Board;
 import constants.TrelloConstants;
 import io.restassured.http.Method;
+import org.testng.annotations.AfterSuite;
 import org.testng.annotations.Test;
 
 import static constants.TrelloConstants.BOARD_DESC_UPD;
@@ -91,6 +92,11 @@ public class TrelloBoardTests {
                 .id(boardId)
                 .callApi().then()
                 .specification(BoardApi.notFoundResponse()).extract().response();
+
+    }
+
+    @AfterSuite
+    public void tearDown() {
 
     }
 }
