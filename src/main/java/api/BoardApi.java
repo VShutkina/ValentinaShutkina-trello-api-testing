@@ -1,5 +1,8 @@
 package api;
 
+import beans.Board;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.builder.ResponseSpecBuilder;
@@ -15,12 +18,15 @@ import java.util.HashMap;
 
 import static constants.TrelloConstants.*;
 import static io.restassured.http.ContentType.JSON;
+import static io.restassured.http.ContentType.TEXT;
+import static io.restassured.http.Method.POST;
 import static org.hamcrest.Matchers.lessThan;
 
 public class BoardApi {
 
     private HashMap<String, String> params = new HashMap<>();
     private Method method = Method.GET;
+    private String boardId = "";
 
     private BoardApi() {
     }
@@ -37,6 +43,23 @@ public class BoardApi {
                 .expectResponseTime(lessThan(2000L))
                 .expectStatusCode(HttpStatus.SC_OK)
                 .build();
+    }
+
+    public static ResponseSpecification notFoundResponse() {
+        return new ResponseSpecBuilder()
+                .expectContentType(TEXT)
+                .expectHeader(HttpHeaders.CONNECTION, "keep-alive")
+                .expectResponseTime(lessThan(2000L))
+                .expectStatusCode(HttpStatus.SC_NOT_FOUND)
+                .build();
+    }
+
+    public static Board getBoardAnswer(Response response) {
+        return new Gson().
+                fromJson(response.asString().
+                                trim(),
+                        new TypeToken<Board>() {
+                        }.getType());
     }
 
     public static RequestSpecification baseRequestConfiguration() {
@@ -62,8 +85,10 @@ public class BoardApi {
             return this;
         }
 
+        //trelloAPI doesn't describe this "id" param for board's creation
         public RequestBuilder id(String id) {
-            boardApi.params.put(PARAM_ID, id);
+            //boardApi.params.put(PARAM_ID, id);
+            boardApi.boardId = id;
             return this;
         }
 
@@ -78,11 +103,12 @@ public class BoardApi {
         }
 
         public Response callApi() {
+            String basePath = (boardApi.method == POST) ? BOARD_PATH : BOARD_PATH.concat(boardApi.boardId);
             return RestAssured.with()
                     .queryParams(boardApi.params)
                     .spec(baseRequestConfiguration())
                     .log().all()
-                    .basePath(BOARD_PATH)
+                    .basePath(basePath)
                     .request(boardApi.method)
                     .prettyPeek();
         }
