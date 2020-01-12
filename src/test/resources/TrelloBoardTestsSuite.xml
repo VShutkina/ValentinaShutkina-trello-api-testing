@@ -3,13 +3,6 @@
     <test name="Trello Board Tests">
         <classes>
             <class name="TrelloBoardTests">
-                <methods>
-                    <include name="createBoardTest"/>
-                    <include name="getBoardTest"/>
-                    <include name="updateBoardTest"/>
-                    <include name="deleteBoardTest"/>
-                    <include name="updateBoardGreenLabel"/>
-                </methods>
             </class>
         </classes>
     </test>
