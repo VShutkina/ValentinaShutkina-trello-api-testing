@@ -1,12 +1,13 @@
 import api.BoardApi;
+import api.MemberApi;
 import beans.Board;
-import constants.TrelloConstants;
 import io.restassured.http.Method;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.Test;
 
-import static constants.TrelloConstants.BOARD_DESC_UPD;
-import static constants.TrelloConstants.BOARD_NAME_FOR_UPDATE;
+import java.util.List;
+
+import static constants.TrelloConstants.*;
 import static io.restassured.http.Method.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -18,12 +19,12 @@ public class TrelloBoardTests {
         Board board = BoardApi.getBoardAnswer(BoardApi
                 .with()
                 .method(POST)
-                .name(TrelloConstants.BOARD_NAME)
-                .desc(TrelloConstants.BOARD_DESC)
+                .name(BOARD_NAME)
+                .desc(BOARD_DESC)
                 .callApi().then()
                 .specification(BoardApi.successResponse()).extract().response());
-        assertThat(board.name, equalTo(TrelloConstants.BOARD_NAME));
-        assertThat(board.desc, equalTo(TrelloConstants.BOARD_DESC));
+        assertThat(board.name, equalTo(BOARD_NAME));
+        assertThat(board.desc, equalTo(BOARD_DESC));
 
     }
 
@@ -33,8 +34,8 @@ public class TrelloBoardTests {
         Board board = BoardApi.getBoardAnswer(BoardApi
                 .with()
                 .method(POST)
-                .name(TrelloConstants.BOARD_NAME)
-                .desc(TrelloConstants.BOARD_DESC)
+                .name(BOARD_NAME)
+                .desc(BOARD_DESC)
                 .callApi().then()
                 .specification(BoardApi.successResponse()).extract().response());
 
@@ -53,8 +54,8 @@ public class TrelloBoardTests {
         String boardId = BoardApi.getBoardAnswer(BoardApi
                 .with()
                 .method(POST)
-                .name(TrelloConstants.BOARD_NAME)
-                .desc(TrelloConstants.BOARD_DESC)
+                .name(BOARD_NAME)
+                .desc(BOARD_DESC)
                 .callApi().then()
                 .specification(BoardApi.successResponse()).extract().response()).id;
 
@@ -75,8 +76,8 @@ public class TrelloBoardTests {
         String boardId = BoardApi.getBoardAnswer(BoardApi
                 .with()
                 .method(POST)
-                .name(TrelloConstants.BOARD_NAME_FOR_DELETE)
-                .desc(TrelloConstants.BOARD_DESC)
+                .name(BOARD_NAME_FOR_DELETE)
+                .desc(BOARD_DESC)
                 .callApi().then()
                 .specification(BoardApi.successResponse()).extract().response()).id;
 
@@ -95,8 +96,51 @@ public class TrelloBoardTests {
 
     }
 
+    @Test
+    public void updateBoardGreenLabel() {
+        String boardId = BoardApi.getBoardAnswer(BoardApi
+                .with()
+                .method(POST)
+                .name(BOARD_NAME_GET_PARAM_CASE)
+                .callApi().then()
+                .specification(BoardApi.successResponse()).extract().response()).id;
+
+        Board boardUpd = BoardApi.getBoardAnswer(BoardApi.with()
+                .method(PUT)
+                .id(boardId)
+                .labelName(BOARD_LABEL_GREEN)
+                .callApi().then()
+                .extract().response());
+
+        Board boardFromGET = BoardApi.getBoardAnswer(BoardApi
+                .with()
+                .method(GET)
+                .id(boardId)
+                .callApi().then()
+                .specification(BoardApi.successResponse()).extract().response());
+        assertThat(boardFromGET.labelNames.green, equalTo(boardUpd.labelNames.green));
+
+
+    }
+
     @AfterSuite
     public void tearDown() {
+
+        List<Board> boardsList = MemberApi.getMemberBoardsListAnswer(
+                MemberApi.with()
+                        .getMemberBoards().then()
+                        .specification(MemberApi.successResponse())
+                        .extract().response());
+
+        for (Board board : boardsList) {
+            BoardApi
+                    .with()
+                    .method(Method.DELETE)
+                    .id(board.id)
+                    .callApi().then()
+                    .specification(BoardApi.successResponse()).extract().response();
+
+        }
 
     }
 }

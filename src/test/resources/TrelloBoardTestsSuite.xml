@@ -8,8 +8,7 @@
                     <include name="getBoardTest"/>
                     <include name="updateBoardTest"/>
                     <include name="deleteBoardTest"/>
-                    <include name="simpleGetMemberTest"/>
-                    <include name="simpleGetMemberBoardsTest"/>
+                    <include name="updateBoardGreenLabel"/>
                 </methods>
             </class>
         </classes>
