@@ -2,7 +2,7 @@
 <suite name="Trello Board Tests Suite">
     <test name="Trello Board Tests">
         <classes>
-            <class name="TrelloBoardTests">
+            <class name="TrelloBoardTest">
             </class>
         </classes>
     </test>

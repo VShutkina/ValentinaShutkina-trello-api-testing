@@ -12,7 +12,7 @@ import static io.restassured.http.Method.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
-public class TrelloBoardTests {
+public class TrelloBoardTest {
 
     @Test
     public void createBoardTest() {
