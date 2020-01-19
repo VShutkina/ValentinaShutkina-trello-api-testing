@@ -15,6 +15,7 @@ import org.apache.http.HttpStatus;
 import utils.ApiProperties;
 
 import java.util.HashMap;
+import java.util.List;
 
 import static constants.TrelloConstants.*;
 import static io.restassured.http.ContentType.JSON;
@@ -40,7 +41,7 @@ public class BoardApi {
         return new ResponseSpecBuilder()
                 .expectContentType(JSON)
                 .expectHeader(HttpHeaders.CONNECTION, "keep-alive")
-                .expectResponseTime(lessThan(2000L))
+                .expectResponseTime(lessThan(6000L))
                 .expectStatusCode(HttpStatus.SC_OK)
                 .build();
     }
@@ -49,7 +50,7 @@ public class BoardApi {
         return new ResponseSpecBuilder()
                 .expectContentType(TEXT)
                 .expectHeader(HttpHeaders.CONNECTION, "keep-alive")
-                .expectResponseTime(lessThan(2000L))
+                .expectResponseTime(lessThan(6000L))
                 .expectStatusCode(HttpStatus.SC_NOT_FOUND)
                 .build();
     }
@@ -59,6 +60,14 @@ public class BoardApi {
                 fromJson(response.asString().
                                 trim(),
                         new TypeToken<Board>() {
+                        }.getType());
+    }
+
+    public static List<Board> getMemberBoardsListAnswer(Response response) {
+        return new Gson().
+                fromJson(response.asString().
+                                trim(),
+                        new TypeToken<List<Board>>() {
                         }.getType());
     }
 
@@ -112,6 +121,16 @@ public class BoardApi {
                     .spec(baseRequestConfiguration())
                     .log().all()
                     .basePath(basePath)
+                    .request(boardApi.method)
+                    .prettyPeek();
+        }
+
+        public Response getMemberBoards() {
+            String username = ApiProperties.getApiProperties().getProperty(USERNAME);
+            return RestAssured.with()
+                    .spec(baseRequestConfiguration())
+                    .log().all()
+                    .basePath(MEMBER_PATH.concat(username).concat(BOARD_PATH))
                     .request(boardApi.method)
                     .prettyPeek();
         }
