@@ -8,6 +8,7 @@ import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.http.Method;
 import io.restassured.response.Response;
+import io.restassured.response.ValidatableResponse;
 import io.restassured.specification.RequestSpecification;
 import io.restassured.specification.ResponseSpecification;
 import org.apache.http.HttpHeaders;
@@ -55,17 +56,17 @@ public class BoardApi {
                 .build();
     }
 
-    public static Board getBoardAnswer(Response response) {
+    public static Board getBoard(ValidatableResponse response) {
         return new Gson().
-                fromJson(response.asString().
+                fromJson(response.extract().response().asString().
                                 trim(),
                         new TypeToken<Board>() {
                         }.getType());
     }
 
-    public static List<Board> getMemberBoardsListAnswer(Response response) {
+    public static List<Board> getMemberBoardsList(ValidatableResponse response) {
         return new Gson().
-                fromJson(response.asString().
+                fromJson(response.extract().response().asString().
                                 trim(),
                         new TypeToken<List<Board>>() {
                         }.getType());

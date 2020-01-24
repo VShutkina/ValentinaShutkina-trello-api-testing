@@ -3,51 +3,23 @@ package services;
 import api.BoardApi;
 import beans.Board;
 import io.restassured.http.Method;
+import org.apache.commons.lang3.RandomStringUtils;
 
-import static io.restassured.http.Method.*;
+import static io.restassured.http.Method.POST;
 
 public class BoardService {
 
     public BoardService() {
     }
 
-    public static Board createBoard(String boardName, String boardDesc) {
-        return BoardApi.getBoardAnswer(BoardApi
+    public static Board createDefaultBoard() {
+        return BoardApi.getBoard(BoardApi
                 .with()
                 .method(POST)
-                .name(boardName)
-                .desc(boardDesc)
+                .name(RandomStringUtils.randomAlphabetic(5))
+                .desc(RandomStringUtils.randomAlphabetic(5))
                 .callApi().then()
-                .specification(BoardApi.successResponse()).extract().response());
-    }
-
-    public static Board updateBoard(String boardId, String newBoardName, String newBoardDesc) {
-        return BoardApi.getBoardAnswer(BoardApi.with()
-                .method(PUT)
-                .id(boardId)
-                .name(newBoardName)
-                .desc(newBoardDesc)
-                .callApi().then()
-                .extract().response());
-
-    }
-
-    public static Board getBoardSuccess(String boardId) {
-        return BoardApi.getBoardAnswer(BoardApi
-                .with()
-                .method(GET)
-                .id(boardId)
-                .callApi().then()
-                .specification(BoardApi.successResponse()).extract().response());
-    }
-
-    public static void getBoardNotFound(String boardId) {
-        BoardApi
-                .with()
-                .method(GET)
-                .id(boardId)
-                .callApi().then()
-                .specification(BoardApi.notFoundResponse()).extract().response();
+                .specification(BoardApi.successResponse()));
     }
 
     public static void deleteBoard(String boardId) {
@@ -56,15 +28,6 @@ public class BoardService {
                 .method(Method.DELETE)
                 .id(boardId)
                 .callApi().then()
-                .specification(BoardApi.successResponse()).extract().response();
-    }
-
-    public static Board updateBoardLabel(String boardId, String label) {
-        return BoardApi.getBoardAnswer(BoardApi.with()
-                .method(PUT)
-                .id(boardId)
-                .labelName(label)
-                .callApi().then()
-                .extract().response());
+                .specification(BoardApi.successResponse());
     }
 }
